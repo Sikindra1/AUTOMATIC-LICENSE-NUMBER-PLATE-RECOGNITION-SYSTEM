@@ -1,0 +1,296 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>number_plate_det</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-05-07"><meta name="DC.source" content="number_plate_det.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">clc
+close <span class="string">all</span>;
+clear;
+ Z=1;
+ s1 = serial(<span class="string">'COM5'</span>);
+ <span class="keyword">for</span> k=1:10
+<span class="comment">%vid=webcam;</span>
+<span class="comment">%  triggerconfig(vid,'manual');</span>
+<span class="comment">% set(vid,'FramesPerTrigger',1);</span>
+<span class="comment">% set(vid,'TriggerRepeat',inf);</span>
+<span class="comment">% start(vid);</span>
+<span class="comment">% vid.ReturnedColorspace = 'rgb';</span>
+
+<span class="comment">%x=snapshot(vid);</span>
+<span class="comment">% imwrite(x,'input.jpg');</span>
+x = imread(<span class="string">'D:\Vehicle number plate recognition\test images\IMG.JPG'</span>);
+I=x;
+y=x;
+<span class="comment">%figure,imshow(I);</span>
+subplot(2,2,1);
+imshow(x);
+drawnow;
+<span class="comment">%I=imresize(I,[287,460]);</span>
+   <span class="comment">%  subplot(1,4,1),imshow(I);</span>
+   <span class="comment">%  title('Original image');</span>
+    <span class="comment">% F=imcrop(I,[300,300]);</span>
+     imwrite(I,[<span class="string">'test images\'</span>,num2str(Z),<span class="string">'.jpg'</span>]);Z=Z+1;
+     I=imresize(I,[300,300]);
+<span class="comment">%      stop(vid)</span>
+<span class="comment">%delete(vid)</span>
+
+load <span class="string">imgfildata</span>;
+[file,path]=uigetfile({<span class="string">'*.jpg;*.bmp;*.png;*.tif'</span>},<span class="string">'Choose an image'</span>);
+s=[path,file];
+picture=imread(s);
+[~,cc]=size(picture);
+picture=imresize(picture,[300 500]);
+
+<span class="keyword">if</span> size(picture,3)==3
+  picture=rgb2gray(picture);
+<span class="keyword">end</span>
+<span class="comment">% se=strel('rectangle',[5,5]);</span>
+<span class="comment">% a=imerode(picture,se);</span>
+<span class="comment">% figure,imshow(a);</span>
+<span class="comment">% b=imdilate(a,se);</span>
+threshold = graythresh(picture);
+picture =~im2bw(picture,threshold);
+picture = bwareaopen(picture,30);
+imshow(picture)
+<span class="keyword">if</span> cc&gt;2000
+    picture1=bwareaopen(picture,3500);
+<span class="keyword">else</span>
+picture1=bwareaopen(picture,3000);
+<span class="keyword">end</span>
+figure,imshow(picture1)
+picture2=picture-picture1;
+figure,imshow(picture2)
+picture2=bwareaopen(picture2,200);
+figure,imshow(picture2)
+
+[L,Ne]=bwlabel(picture2);
+propied=regionprops(L,<span class="string">'BoundingBox'</span>);
+hold <span class="string">on</span>
+pause(1)
+<span class="keyword">for</span> n=1:size(propied,1)
+  rectangle(<span class="string">'Position'</span>,propied(n).BoundingBox,<span class="string">'EdgeColor'</span>,<span class="string">'g'</span>,<span class="string">'LineWidth'</span>,2)
+<span class="keyword">end</span>
+hold <span class="string">off</span>
+
+figure
+final_output=[];
+t=[];
+<span class="keyword">for</span> n=1:Ne
+  [r,c] = find(L==n);
+  n1=picture(min(r):max(r),min(c):max(c));
+  n1=imresize(n1,[42,24]);
+  imshow(n1)
+  pause(0.2)
+  x=[ ];
+
+totalLetters=size(imgfile,2);
+
+ <span class="keyword">for</span> k=1:totalLetters
+
+    y=corr2(imgfile{1,k},n1);
+    x=[x y];
+
+ <span class="keyword">end</span>
+ t=[t max(x)];
+ <span class="keyword">if</span> max(x)&gt;.45
+ z=find(x==max(x));
+ out=cell2mat(imgfile(2,z));
+
+
+
+final_output=[final_output out];
+<span class="keyword">end</span>
+<span class="keyword">end</span>
+
+file = fopen(<span class="string">'number_Plate.txt'</span>, <span class="string">'wt'</span>);
+    fprintf(file,<span class="string">'%s\n'</span>,final_output);
+    fclose(file);
+    winopen(<span class="string">'number_Plate.txt'</span>)
+
+   <span class="comment">% fopen(s1);</span>
+   fprintf(s1,final_output);
+   fclose(s1);
+  pause(5)
+ <span class="keyword">end</span>
+</pre><pre class="codeoutput error">Error using imwrite (line 454)
+Unable to open file "test images\1.jpg" for writing.  You might not have write permission.
+
+Error in number_plate_det (line 28)
+     imwrite(I,['test images\',num2str(Z),'.jpg']);Z=Z+1;
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+
+clc
+close all;
+clear;
+ Z=1;
+ s1 = serial('COM5');
+ for k=1:10
+%vid=webcam;
+%  triggerconfig(vid,'manual');
+% set(vid,'FramesPerTrigger',1);
+% set(vid,'TriggerRepeat',inf);
+% start(vid);
+% vid.ReturnedColorspace = 'rgb';
+
+%x=snapshot(vid);
+% imwrite(x,'input.jpg');
+x = imread('D:\Vehicle number plate recognition\test images\IMG.JPG');
+I=x;
+y=x;
+%figure,imshow(I);
+subplot(2,2,1);
+imshow(x);
+drawnow;
+%I=imresize(I,[287,460]);
+   %  subplot(1,4,1),imshow(I);
+   %  title('Original image');
+    % F=imcrop(I,[300,300]);
+     imwrite(I,['test images\',num2str(Z),'.jpg']);Z=Z+1;
+     I=imresize(I,[300,300]);
+%      stop(vid)
+%delete(vid)
+
+load imgfildata;
+[file,path]=uigetfile({'*.jpg;*.bmp;*.png;*.tif'},'Choose an image');
+s=[path,file];
+picture=imread(s);
+[~,cc]=size(picture);
+picture=imresize(picture,[300 500]);
+
+if size(picture,3)==3
+  picture=rgb2gray(picture);
+end
+% se=strel('rectangle',[5,5]);
+% a=imerode(picture,se);
+% figure,imshow(a);
+% b=imdilate(a,se);
+threshold = graythresh(picture);
+picture =~im2bw(picture,threshold);
+picture = bwareaopen(picture,30);
+imshow(picture)
+if cc>2000
+    picture1=bwareaopen(picture,3500);
+else
+picture1=bwareaopen(picture,3000);
+end
+figure,imshow(picture1)
+picture2=picture-picture1;
+figure,imshow(picture2)
+picture2=bwareaopen(picture2,200);
+figure,imshow(picture2)
+
+[L,Ne]=bwlabel(picture2);
+propied=regionprops(L,'BoundingBox');
+hold on
+pause(1)
+for n=1:size(propied,1)
+  rectangle('Position',propied(n).BoundingBox,'EdgeColor','g','LineWidth',2)
+end
+hold off
+
+figure
+final_output=[];
+t=[];
+for n=1:Ne
+  [r,c] = find(L==n);
+  n1=picture(min(r):max(r),min(c):max(c));
+  n1=imresize(n1,[42,24]);
+  imshow(n1)
+  pause(0.2)
+  x=[ ];
+
+totalLetters=size(imgfile,2);
+
+ for k=1:totalLetters
+    
+    y=corr2(imgfile{1,k},n1);
+    x=[x y];
+    
+ end
+ t=[t max(x)];
+ if max(x)>.45
+ z=find(x==max(x));
+ out=cell2mat(imgfile(2,z));
+ 
+ 
+    
+final_output=[final_output out];
+end
+end
+
+file = fopen('number_Plate.txt', 'wt');
+    fprintf(file,'%s\n',final_output);
+    fclose(file);                     
+    winopen('number_Plate.txt')
+  
+   % fopen(s1);
+   fprintf(s1,final_output);
+   fclose(s1);
+  pause(5) 
+ end 
+##### SOURCE END #####
+--></body></html>
